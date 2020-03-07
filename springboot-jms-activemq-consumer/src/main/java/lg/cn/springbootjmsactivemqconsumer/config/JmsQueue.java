@@ -1,0 +1,42 @@
+package lg.cn.springbootjmsactivemqconsumer.config;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import lg.cn.springbootjmsactivemqconsumer.pojo.Message;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.jms.annotation.JmsListener;
+import org.springframework.jms.core.JmsMessagingTemplate;
+import org.springframework.stereotype.Component;
+
+import javax.jms.JMSException;
+import javax.jms.ObjectMessage;
+import javax.jms.Queue;
+import javax.jms.TextMessage;
+
+@Component
+public class JmsQueue {
+
+    /**
+     * 配置监听队列
+     *
+     * @param message
+     * @throws JsonProcessingException
+     */
+    //    @JmsListener(destination = "${destination}")
+    @JmsListener(destination = "springboot-queue")
+    public void receive(Object message) throws JsonProcessingException, JMSException {
+        ObjectMapper objectMapper = new ObjectMapper();
+        if (message == null) {
+            System.out.println("接收的消息为空");
+        } else if (message instanceof TextMessage) {
+            String JMSCorrelationID = ((TextMessage) message).getJMSCorrelationID();
+            System.out.println(((TextMessage) message).getText());
+            System.out.println("JMSCorrelationID>>>>" + JMSCorrelationID);
+        } else if (message instanceof ObjectMessage) {
+            System.out.println(objectMapper.writeValueAsString(((ObjectMessage) message).getObject()));
+        } else {
+            System.out.println(objectMapper.writeValueAsString(message));//其他消息类型
+        }
+    }
+}
