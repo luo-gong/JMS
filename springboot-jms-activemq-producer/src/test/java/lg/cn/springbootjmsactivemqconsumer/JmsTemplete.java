@@ -36,4 +36,9 @@ public class JmsTemplete {
     void messageHeaderTopic() {
         jmsTempleteTopic.send();
     }
+
+    @Test
+    void BytesMessage() {
+        jmsTempleteQueue.send3();
+    }
 }
